@@ -4,6 +4,7 @@ import com.taskmanager.Entity.Student;
 import com.taskmanager.Repository.Repo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,10 +19,12 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class StudentService {
 
     private final Repo studentRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public StudentService(Repo studentRepository) {
+    public StudentService(Repo studentRepository, PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Student> getAllStudents() {
@@ -29,6 +32,7 @@ public class StudentService {
     }
 
     public Student saveStudent(Student student) {
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
         return studentRepository.save(student);
     }
 
